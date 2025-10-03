@@ -25,7 +25,7 @@ fi
 # 2. Tạo cấu trúc thư mục
 echo ""
 echo "Step 2: Tạo cấu trúc thư mục..."
-PROJECT_DIR="/opt/postgresql-production"
+PROJECT_DIR=$(pwd)
 sudo mkdir -p $PROJECT_DIR/{backups/wal,init-scripts,logs}
 cd $PROJECT_DIR
 
