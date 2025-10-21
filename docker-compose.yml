@@ -12,13 +12,13 @@ services:
     
     volumes:
       # Data persistence
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data:Z
       # Custom configuration
-      - ./postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./postgresql.conf:/etc/postgresql/postgresql.conf:Z
       # Initialization scripts
-      - ./init-scripts:/docker-entrypoint-initdb.d
+      - ./init-scripts:/docker-entrypoint-initdb.d:Z
       # Backup location
-      - ./backups:/backups
+      - ./backups:/backups:Z
     
     ports:
       - "127.0.0.1:5432:5432"  # Chỉ bind với localhost

@@ -9,18 +9,18 @@ echo "=== PostgreSQL Production Setup trên Fedora ==="
 echo ""
 
 # 1. Cài đặt Docker và Docker Compose
-echo "Step 1: Cài đặt Docker..."
-if ! command -v docker &> /dev/null; then
-    sudo dnf -y install dnf-plugins-core
-    sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
-    sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
-    sudo systemctl start docker
-    sudo systemctl enable docker
-    sudo usermod -aG docker $USER
-    echo "Docker đã được cài đặt!"
-else
-    echo "Docker đã được cài đặt trước đó."
-fi
+# echo "Step 1: Cài đặt Docker..."
+# if ! command -v docker &> /dev/null; then
+#     sudo dnf -y install dnf-plugins-core
+#     sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+#     sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+#     sudo systemctl start docker
+#     sudo systemctl enable docker
+#     sudo usermod -aG docker $USER
+#     echo "Docker đã được cài đặt!"
+# else
+#     echo "Docker đã được cài đặt trước đó."
+# fi
 
 # 2. Tạo cấu trúc thư mục
 echo ""
@@ -47,7 +47,7 @@ if [ ! -f .env ]; then
 POSTGRES_USER=$pg_user
 POSTGRES_PASSWORD=$pg_pass
 POSTGRES_DB=$pg_db
-PGADMIN_EMAIL=admin@localhost.local
+PGADMIN_EMAIL=tienpham.hust@gmail.com
 PGADMIN_PASSWORD=admin123
 TZ=Asia/Ho_Chi_Minh
 EOF
