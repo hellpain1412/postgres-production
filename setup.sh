@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # PostgreSQL Production Setup Script for Fedora
-# Run as root or with sudo
+# Run as root or with
 
 set -e
 
@@ -11,12 +11,12 @@ echo ""
 # 1. Cài đặt Docker và Docker Compose
 # echo "Step 1: Cài đặt Docker..."
 # if ! command -v docker &> /dev/null; then
-#     sudo dnf -y install dnf-plugins-core
-#     sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
-#     sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
-#     sudo systemctl start docker
-#     sudo systemctl enable docker
-#     sudo usermod -aG docker $USER
+#      dnf -y install dnf-plugins-core
+#      dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+#      dnf install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+#      systemctl start docker
+#      systemctl enable docker
+#      usermod -aG docker $USER
 #     echo "Docker đã được cài đặt!"
 # else
 #     echo "Docker đã được cài đặt trước đó."
@@ -26,7 +26,7 @@ echo ""
 echo ""
 echo "Step 2: Tạo cấu trúc thư mục..."
 PROJECT_DIR=$(pwd)
-sudo mkdir -p $PROJECT_DIR/{backups/wal,init-scripts,logs}
+mkdir -p $PROJECT_DIR/{backups/wal,init-scripts,logs}
 cd $PROJECT_DIR
 
 # 3. Tạo file .env (nếu chưa có)
@@ -43,7 +43,7 @@ if [ ! -f .env ]; then
     read -p "Nhập tên database [production_db]: " pg_db
     pg_db=${pg_db:-production_db}
     
-    sudo cat > .env << EOF
+     cat > .env << EOF
 POSTGRES_USER=$pg_user
 POSTGRES_PASSWORD=$pg_pass
 POSTGRES_DB=$pg_db
@@ -51,7 +51,7 @@ PGADMIN_EMAIL=tienpham.hust@gmail.com
 PGADMIN_PASSWORD=admin123
 TZ=Asia/Ho_Chi_Minh
 EOF
-    sudo chmod 600 .env
+    chmod 600 .env
     echo ".env đã được tạo!"
 else
     echo "File .env đã tồn tại."
@@ -60,16 +60,16 @@ fi
 # 4. Set quyền
 echo ""
 echo "Step 4: Thiết lập quyền..."
-sudo chown -R 999:999 $PROJECT_DIR/backups
-sudo chmod 755 $PROJECT_DIR/backups
+chown -R 999:999 $PROJECT_DIR/backups
+chmod 755 $PROJECT_DIR/backups
 
 # 5. Cấu hình firewall
 echo ""
 echo "Step 5: Cấu hình firewall..."
 read -p "Bạn có muốn mở port PostgreSQL (5432) qua firewall? [y/N]: " open_firewall
 if [[ $open_firewall == "y" || $open_firewall == "Y" ]]; then
-    sudo firewall-cmd --permanent --add-port=5432/tcp
-    sudo firewall-cmd --reload
+    firewall-cmd --permanent --add-port=5432/tcp
+    firewall-cmd --reload
     echo "Port 5432 đã được mở."
 else
     echo "Bỏ qua cấu hình firewall."
@@ -78,7 +78,7 @@ fi
 # 6. Tạo systemd service
 echo ""
 echo "Step 6: Tạo systemd service..."
-sudo cat > /etc/systemd/system/postgresql-docker.service << 'EOF'
+ cat > /etc/systemd/system/postgresql-docker.service << 'EOF'
 [Unit]
 Description=PostgreSQL Docker Container
 Requires=docker.service
@@ -96,14 +96,14 @@ StandardOutput=journal
 WantedBy=multi-user.target
 EOF
 
-sudo systemctl daemon-reload
-sudo systemctl enable postgresql-docker.service
+systemctl daemon-reload
+systemctl enable postgresql-docker.service
 echo "Systemd service đã được tạo và enable!"
 
 # 7. Tạo backup script
 echo ""
 echo "Step 7: Tạo backup script..."
-sudo cat > $PROJECT_DIR/backup.sh << 'EOF'
+ cat > $PROJECT_DIR/backup.sh << 'EOF'
 #!/bin/bash
 # PostgreSQL Backup Script
 
@@ -125,14 +125,14 @@ find $BACKUP_DIR -name "backup_*.sql.gz" -mtime +7 -delete
 echo "Backup completed: backup_$DATE.sql.gz"
 EOF
 
-sudo chmod +x $PROJECT_DIR/backup.sh
+chmod +x $PROJECT_DIR/backup.sh
 
 # 8. Cấu hình cron cho backup
 echo ""
 echo "Step 8: Cấu hình backup tự động..."
 read -p "Bạn có muốn thiết lập backup tự động hàng ngày? [y/N]: " setup_cron
 if [[ $setup_cron == "y" || $setup_cron == "Y" ]]; then
-    (sudo crontab -l 2>/dev/null; echo "0 2 * * * $PROJECT_DIR/backup.sh >> $PROJECT_DIR/logs/backup.log 2>&1") | sudo crontab -
+    ( crontab -l 2>/dev/null; echo "0 2 * * * $PROJECT_DIR/backup.sh >> $PROJECT_DIR/logs/backup.log 2>&1") |  crontab -
     echo "Đã thiết lập backup tự động lúc 2:00 sáng hàng ngày."
 fi
 
@@ -140,8 +140,8 @@ fi
 if command -v getenforce &> /dev/null && [ "$(getenforce)" != "Disabled" ]; then
     echo ""
     echo "Step 9: Cấu hình SELinux..."
-    sudo semanage fcontext -a -t container_file_t "$PROJECT_DIR(/.*)?" 2>/dev/null || true
-    sudo restorecon -Rv $PROJECT_DIR
+    semanage fcontext -a -t container_file_t "$PROJECT_DIR(/.*)?" 2>/dev/null || true
+    restorecon -Rv $PROJECT_DIR
 fi
 
 echo ""
@@ -150,13 +150,13 @@ echo ""
 echo "Các bước tiếp theo:"
 echo "1. Copy file docker-compose.yml, postgresql.conf vào $PROJECT_DIR"
 echo "2. Chỉnh sửa file .env tại $PROJECT_DIR/.env"
-echo "3. Chạy: cd $PROJECT_DIR && sudo docker compose up -d"
-echo "4. Kiểm tra logs: sudo docker compose logs -f postgres"
+echo "3. Chạy: cd $PROJECT_DIR &&  docker compose up -d"
+echo "4. Kiểm tra logs:  docker compose logs -f postgres"
 echo ""
 echo "Quản lý service:"
-echo "- Start:  sudo systemctl start postgresql-docker"
-echo "- Stop:   sudo systemctl stop postgresql-docker"
-echo "- Status: sudo systemctl status postgresql-docker"
+echo "- Start:   systemctl start postgresql-docker"
+echo "- Stop:    systemctl stop postgresql-docker"
+echo "- Status:  systemctl status postgresql-docker"
 echo ""
-echo "Backup thủ công: sudo $PROJECT_DIR/backup.sh"
+echo "Backup thủ công:  $PROJECT_DIR/backup.sh"
 echo ""
