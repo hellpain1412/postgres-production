@@ -55,36 +55,6 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  # PgAdmin (optional - for management)
-  # pgadmin:
-  #   image: dpage/pgadmin4:latest
-  #   container_name: pgadmin_prod
-  #   restart: unless-stopped
-    
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
-  #     PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
-  #     PGADMIN_CONFIG_SERVER_MODE: 'True'
-    
-  #   volumes:
-  #     - pgadmin_data:/var/lib/pgadmin
-    
-  #   ports:
-  #     - "127.0.0.1:5050:80"
-    
-  #   networks:
-  #     - postgres_network
-    
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-    
-  #   logging:
-  #     driver: "json-file"
-  #     options:
-  #       max-size: "10m"
-  #       max-file: "3"
-
 volumes:
   postgres_data:
     driver: local
